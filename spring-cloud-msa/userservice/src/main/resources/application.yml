@@ -1,5 +1,5 @@
 server:
-  port: 0 # 0 : ???? ??
+  port: 0 # 0 : 랜덤포트 할당
 spring:
   application:
     name: userservice
