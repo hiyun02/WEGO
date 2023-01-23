@@ -1,6 +1,6 @@
 
 server:
-  port: 0 #random port
+  port: 0 #random port : 서비스의 인스턴스를 자유자재로 늘이고 줄이며 활요하기 위해 사용
 spring:
   application:
     name: my-first-service
@@ -11,4 +11,5 @@ eureka:
     service-url:
       defaultZone : http://localhost:8761/eureka
   instance:
+    hostname: localhost
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
