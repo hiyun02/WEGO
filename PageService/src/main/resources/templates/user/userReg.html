@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords"
+          content="airbnb, booking, city guide, directory, events, hotel booking, listings, marketing, places, restaurant, restaurant">
+    <meta name="description" content="Guido - Directory & Listing HTML Template">
+    <meta name="CreativeLayers" content="ATFN">
+    <!-- css file -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/fileuploader.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashbord_navitaion.css">
+    <!-- Responsive stylesheet -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Title -->
+    <title>회원가입</title>
+    <!-- Favicon -->
+    <link href="/images/favicon.ico" sizes="128x128" rel="shortcut icon" type="image/x-icon"/>
+    <link href="/images/favicon.ico" sizes="128x128" rel="shortcut icon"/>
+
+    <!--주소 api-->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="/js/jquery-3.6.0.js"></script>
+    <script src="/js/jquery-migrate-3.0.0.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!--사용자 입력 확인-->
+    <script type="text/javascript">
+        function userRegCheck(f) {
+            if (f.userId.value == "") {
+                swal("아이디를 입력하세요");
+                f.userId.focus();
+                return false;
+            }
+            if (f.password.value == "") {
+                swal("비밀번호를 입력하세요");
+                f.password.focus();
+                return false;
+            }
+            if (f.password2.value == "") {
+                swal("비밀번호 확인을 입력하세요");
+                f.password2.focus();
+                return false;
+            }
+            if (f.password.value != f.password2.value) {
+                swal("비밀번호가 다릅니다 다시 입력하세요");
+                f.user_pwd.focus();
+                return false;
+            }
+            if (f.email.value == "") {
+                swal("이메일을 입력해주세요");
+                f.email.focus();
+                return false;
+            }
+            if (f.userName.value == "") {
+                swal("이름을 입력해주세요");
+                f.userName.focus();
+                return false;
+            }
+            if (f.userNickName.value == "") {
+                swal("닉네임을 입력해주세요");
+                f.userNickName.focus();
+                return false;
+            }
+            if (f.userAge.value == "") {
+                swal("나이를 입력하세요");
+                f.userAge.focus();
+                return false;
+            }
+            if (f.gender.value === "") {
+                swal("성별을 입력해 주세요");
+                f.gender.focus();
+                return false;
+            }
+            if (f.addr.value === "") {
+                swal("주소를 입력해주세요");
+                f.addr.focus();
+                return false;
+            }
+            if (f.introDuce.value === "") {
+                swal("소개글을 입력해 주세요.");
+                f.introDuce.focus();
+                return false;
+            }
+        }
+
+        function kakaoPost(f) {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    let address = data.address;
+                    let zoncode = data.zonecode;
+                    f.addr.value = "(" + zoncode + ")" + address
+                }
+            }).open();
+        }
+    </script>
+
+    <!--아이디 중복 확인-->
+    <script type="text/javascript">
+        function userID_Check() {
+            $.ajax({
+                type: "POST",
+                url: "/user/userIdCheck",
+                data: $("#userId"),
+                success(data) {
+                    console.log(data);
+                    if (data == 1) {
+                        $("#id_result").text("중복된 아이디가 있습니다.");
+                        $("#id_result").css('color', 'red');
+                        $("#btn_reg").attr("type", "button");
+                    } else if (data == 0) {
+                        $("#id_result").text('사용가능한 아이디 입니다.');
+                        $("#id_result").css('color', 'blue');
+                        $("#btn_reg").attr("type", "submit");
+                    } else {
+                        $("#id_result").text('다시 시도해주세요.');
+                        $("#id_result").css('color', 'red');
+                        $("#btn_reg").attr("type", "button");
+                    }
+                }
+            })
+        }
+
+        function userEmailCheck() {
+            $.ajax({
+                type: "POST",
+                url: "/user/userEmailCheck",
+                data: $("#email"),
+                success(data) {
+                    console.log(data);
+                    if (data == 1) {
+                        $("#email_result").text("중복된 이메일입니다");
+                        $("#email_result").css('color', 'red');
+                        $("#btn_reg").attr("type", "button");
+                    } else {
+                        $("#email_result").text('사용가능한 이메일입니다.');
+                        $("#email_result").css('color', 'blue');
+                        $("#btn_reg").attr("type", "submit");
+                    }
+                }
+            });
+        }
+    </script>
+
+</head>
+
+</head>
+<body>
+<form action="/user/userRegProc" method="post" role="form" onsubmit="return userRegCheck(this)">
+    <div class="wrapper">
+        <div class="preloader"></div>
+
+
+        <!-- Our Dashbord -->
+        <div class="container mt80">
+            <div class="row">
+
+                <div class="col-lg-12 mb10">
+                    <div class="breadcrumb_content style2 mb25">
+                        <h2 class="breadcrumb_title">회원가입</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center" style="margin: 0px">
+
+                <div class="col-lg-7">
+                    <div class="my_dashboard_review">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>아이디</label>
+                                    <input type="text" class="form-control" id="userId" name="userId"
+                                           placeholder="아이디를 입력해 주세요">
+                                    <div id="id_result"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="my_profile_setting_input form-group">
+                                    <a href="javascript:void(0);" onclick="userID_Check();"
+                                       class="btn btn-thm listing_save_btn mt30">아이디 중복확인</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>비밀번호</label>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                           placeholder="비밀번호를 입력해 주세요">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>비밀번호 확인</label>
+                                    <input type="password" class="form-control" id="password2" name="password2"
+                                           placeholder="비밀번호를 다시한번 입력해 주세요">
+                                </div>
+                                <div id="pwd_res"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my_dashboard_review mt30">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>이메일</label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                           placeholder="이메일을 입력해 주세요.">
+                                    <div id="email_result"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="my_profile_setting_input form-group">
+                                    <a href="javascript:void(0)" onclick="userEmailCheck();"
+                                       class="btn btn-thm listing_save_btn mt30">이메일 중복확인</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="my_dashboard_review mt30">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>이름</label>
+                                    <input type="text" class="form-control" id="userName" name="userName"
+                                           placeholder="이름을 입력해주세요.">
+                                </div>
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>닉네임</label>
+                                    <input type="text" class="form-control" id="userNickName" name="userNickName"
+                                           placeholder="닉네임을 입력해 주세요.">
+                                </div>
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>성별</label>
+                                    <div class="shortcode_widget_radiobox">
+                                        <div class="ui_kit_radiobox">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <div class="radio">
+                                                <input id="radio_one" name="gender" type="radio" checked=""
+                                                       value="남자">
+                                                <label for="radio_one"><span class="radio-label"></span>남자</label>
+                                            </div>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <div class="radio">
+                                                <input id="radio_two" name="gender" type="radio" value="여자">
+                                                <label for="radio_two"><span class="radio-label"></span>여자</label>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>나이</label>
+                                    <input type="text" id="userAge" name="userAge" placeholder="나이를 입력해 주세요."
+                                           class="form-control">
+                                </div>
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>주소</label>
+                                    <input type="text" id="addr" name="addr" onclick="kakaoPost(this.form)"
+                                           placeholder="현재 주소를 입력해 주세요." class="form-control">
+                                </div>
+                                <div class="my_profile_setting_input ui_kit_select_search form-group">
+                                    <label>소개글</label>
+                                    <input type="text" id="introDuce" name="introDuce" placeholder="소개글을 입력해 주세요."
+                                           class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn_reg" class="btn btn-log btn-block btn-thm">회원가입</button>
+                    <br/><br/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Footer -->
+        <th:block th:replace="footer"></th:block>
+        <a class="scrollToHome" href="#"><i class="fa fa-angle-up"></i></a>
+    </div>
+</form>
+<!-- Wrapper End -->
+<script>
+    $("#password2").on("propertychange change keyup paste input", function () {
+        if ($("#password").val() == $("#password2").val()) {
+            $("#pwd_res").text("비밀번호가 일치합니다!");
+            $("#pwd_res").css('color', 'blue');
+        } else {
+            $("#pwd_res").text("비밀번호가 일치하지 않습니다");
+            $("#pwd_res").css('color', 'red');
+        }
+    });
+</script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.mmenu.all.js"></script>
+<script src="/js/ace-responsive-menu.js"></script>
+<script src="/js/chart.min.js"></script>
+<script src="/js/bootstrap-select.min.js"></script>
+<script src="/js/snackbar.min.js"></script>
+<script src="/js/simplebar.js"></script>
+<script src="/js/parallax.js"></script>
+<script src="/js/scrollto.js"></script>
+<script src="/js/jquery-scrolltofixed-min.js"></script>
+<script src="/js/jquery.counterup.js"></script>
+<script src="/js/wow.min.js"></script>
+<script src="/js/progressbar.js"></script>
+<script src="/js/slider.js"></script>
+<script src="/js/timepicker.js"></script>
+<script src="/js/wow.min.js"></script>
+<script src="/js/jquery.smartuploader.js"></script>
+<script src="/js/dashboard-script.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAz77U5XQuEME6TpftaMdX0bBelQxXRlM&callback=initMap"></script>
+<script src="/js/googlemaps1.js"></script>
+<!-- Custom script for all pages -->
+<script src="/js/script.js"></script>
+</body>
+</html>
