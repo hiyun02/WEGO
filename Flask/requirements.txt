@@ -1,0 +1,7 @@
+tensorflow>=2.11
+konlpy
+Flask
+flask-cors
+pandas
+numpy
+tqdm
